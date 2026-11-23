@@ -519,12 +519,12 @@ let CONFIG = {
   phone2: "+233 26 977 0536",           // second number, shown on the site for calls
   instagram: "https://instagram.com/",  // e.g. https://instagram.com/riyakloset
   tiktok: "https://tiktok.com/",        // e.g. https://tiktok.com/@riyakloset
-  address: "[Street / landmark], Accra, Ghana",
-  landmark: "Opposite [landmark]. Look for the green & gold sign",
+  address: "Accra Newtown, 37 Station, Accra, Ghana",
+  landmark: "",                         // optional extra directions (leave empty to hide)
   hours: [                              // [day label, hours]. Order = Mon..Sun
     ["Monday", "9:00am – 7:00pm"], ["Tuesday", "9:00am – 7:00pm"], ["Wednesday", "9:00am – 7:00pm"],
     ["Thursday", "9:00am – 7:00pm"], ["Friday", "9:00am – 8:00pm"], ["Saturday", "8:00am – 8:00pm"],
-    ["Sunday", "1:00pm – 6:00pm"]
+    ["Sunday", "Closed"]
   ],
   delivery: [                           // shown in cart + Visit Us page
     { id: "pickup", label: "Pick up in store", note: "Try it on before you take it", fee: 0 },
@@ -1543,7 +1543,7 @@ function viewAbout() {
         <h2>Visit the shop</h2>
         <div class="map"><div class="pin">${ICON.pin}<span>Riy@ Kloset</span></div></div>
         <p style="font-weight:800">${CONFIG.address}</p>
-        <p style="color:var(--muted);font-size:.9rem;margin:4px 0 6px">${CONFIG.landmark}</p>
+        ${CONFIG.landmark ? `<p style="color:var(--muted);font-size:.9rem;margin:4px 0 6px">${CONFIG.landmark}</p>` : `<div style="height:8px"></div>`}
         ${phoneList().length ? `<p style="font-weight:800;margin-bottom:14px;line-height:1.9">📞 ${phoneLinks("var(--green)", "<br>📞 ")} <span style="color:var(--muted);font-weight:600;display:block;font-size:.85rem">Call, or WhatsApp us on ${CONFIG.phone || CONFIG.phone2}</span></p>` : `<div style="height:8px"></div>`}
         <div style="display:grid;gap:10px">
           <a class="btn btn-green btn-block" href="${mapUrl}" target="_blank" rel="noopener">${ICON.pin} Open in Google Maps</a>

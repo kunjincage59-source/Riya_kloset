@@ -91,7 +91,7 @@ create policy "settings: public read" on public.settings for select using (true)
 create policy "settings: admin insert" on public.settings for insert with check (public.is_admin());
 create policy "settings: admin update" on public.settings for update using (public.is_admin()) with check (public.is_admin());
 insert into public.settings (id, data)
-values (1, '{"city":"Accra","whatsapp":"233207411266","phone":"+233 20 741 1266","phone2":"+233 26 977 0536"}'::jsonb)
+values (1, '{"city":"Accra","whatsapp":"233207411266","phone":"+233 20 741 1266","phone2":"+233 26 977 0536","address":"Accra Newtown, 37 Station, Accra, Ghana"}'::jsonb)
 on conflict (id) do nothing;
 
 -- ---------------------------------------------------------------------
