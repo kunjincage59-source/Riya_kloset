@@ -461,7 +461,7 @@ footer p{opacity:.8;font-size:.9rem}
     <div>
       <div class="logo" style="margin-bottom:10px">Riy<span class="at">@</span><span class="k">Kloset</span></div>
       <p>Where style meets affordability. Quality fashion, bags, shoes and phones in <span data-city></span>.</p>
-      <p style="margin-top:8px;opacity:1;font-weight:800">📞 <a id="footPhone" href="#"></a></p>
+      <p style="margin-top:8px;opacity:1;font-weight:800" id="footPhone"></p>
       <div class="socials" style="margin-top:14px">
         <a id="ig" href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
         <a id="tt" href="#" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 3v11.5A3.5 3.5 0 1 1 10.5 11"/><path d="M14 3c.4 2.6 2.4 4.4 5 4.6"/></svg></a>
@@ -515,7 +515,8 @@ let CONFIG = {
   momoName: "",                         // name registered on that MoMo number
   city: "Accra",                        // shop city
   whatsapp: "233207411266",             // her WhatsApp in international format, NO "+" or spaces
-  phone: "+233 20 741 1266",            // shown on the site for calls
+  phone: "+233 20 741 1266",            // shown on the site for calls (also WhatsApp)
+  phone2: "+233 26 977 0536",           // second number, shown on the site for calls
   instagram: "https://instagram.com/",  // e.g. https://instagram.com/riyakloset
   tiktok: "https://tiktok.com/",        // e.g. https://tiktok.com/@riyakloset
   address: "[Street / landmark], Accra, Ghana",
@@ -743,6 +744,12 @@ async function loadData() {
     console.error("Could not load shop data", err);
     LOAD_ERROR = !PRODUCTS.length;
   }
+}
+
+/* Shop phone numbers (both shown as tap-to-call links) */
+function phoneList() { return [CONFIG.phone, CONFIG.phone2].filter(Boolean); }
+function phoneLinks(color, sep) {
+  return phoneList().map(n => `<a href="tel:${plain(n).replace(/[^\d+]/g, "")}" style="color:${color}">${n}</a>`).join(sep);
 }
 
 function waLink(text) { return `https://wa.me/${CONFIG.whatsapp}` + (text ? `?text=${encodeURIComponent(text)}` : ""); }
@@ -1535,7 +1542,7 @@ function viewAbout() {
         <div class="map"><div class="pin">${ICON.pin}<span>Riy@ Kloset</span></div></div>
         <p style="font-weight:800">${CONFIG.address}</p>
         <p style="color:var(--muted);font-size:.9rem;margin:4px 0 6px">${CONFIG.landmark}</p>
-        ${CONFIG.phone ? `<p style="font-weight:800;margin-bottom:14px">📞 <a href="tel:${plain(CONFIG.phone).replace(/[^\d+]/g, "")}" style="color:var(--green)">${CONFIG.phone}</a> <span style="color:var(--muted);font-weight:600">(call or WhatsApp)</span></p>` : `<div style="height:8px"></div>`}
+        ${phoneList().length ? `<p style="font-weight:800;margin-bottom:14px;line-height:1.9">📞 ${phoneLinks("var(--green)", "<br>📞 ")} <span style="color:var(--muted);font-weight:600;display:block;font-size:.85rem">Call, or WhatsApp us on ${CONFIG.phone || CONFIG.phone2}</span></p>` : `<div style="height:8px"></div>`}
         <div style="display:grid;gap:10px">
           <a class="btn btn-green btn-block" href="${mapUrl}" target="_blank" rel="noopener">${ICON.pin} Open in Google Maps</a>
           <a class="btn btn-wa btn-block" href="${waLink("Hi Riy@ Kloset! I'd like directions to the shop.")}" target="_blank" rel="noopener">${ICON.wa} Get directions on WhatsApp</a>
@@ -1727,7 +1734,7 @@ function applyConfig() {
   document.querySelectorAll("[data-city]").forEach(el => el.innerHTML = CONFIG.city);
   $("#yr").textContent = new Date().getFullYear();
   const fp = $("#footPhone");
-  if (fp) { fp.innerHTML = CONFIG.phone || ""; fp.href = "tel:" + plain(CONFIG.phone || "").replace(/[^\d+]/g, ""); fp.parentElement.style.display = CONFIG.phone ? "" : "none"; }
+  if (fp) { fp.innerHTML = phoneList().length ? "📞 " + phoneLinks("inherit", " · ") : ""; fp.style.display = phoneList().length ? "" : "none"; }
   if (DEMO && !$(".demo-bar")) app.insertAdjacentHTML("beforebegin", `<div class="demo-bar">Demo mode: showing sample stock. Add your Supabase keys to config.js to go live.</div>`);
 }
 window.addEventListener("hashchange", () => render());

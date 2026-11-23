@@ -13,6 +13,6 @@
   Leave the placeholders as they are to run the site in demo mode.
 */
 window.RK_CONFIG = {
-  supabaseUrl: "https://YOUR-PROJECT-ID.supabase.co",
-  supabaseAnonKey: "YOUR-ANON-PUBLIC-KEY"
+  supabaseUrl: "https://iujmotvzdksweyhheihb.supabase.co",
+  supabaseAnonKey: "sb_publishable_ddBSt8z8LCSZcbwHO9tK3A_YLtTmjLD"
 };

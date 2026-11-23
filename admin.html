@@ -206,7 +206,7 @@ const CATS = { men: "Men", women: "Women", bags: "Bags", shoes: "Shoes", phones:
 // Everything sold is brand new, so there is no condition picker.
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const DEFAULT_SETTINGS = {
-  city: "Accra", whatsapp: "233207411266", phone: "+233 20 741 1266", instagram: "", tiktok: "",
+  city: "Accra", whatsapp: "233207411266", phone: "+233 20 741 1266", phone2: "+233 26 977 0536", instagram: "", tiktok: "",
   address: "", landmark: "", momoNumber: "", momoName: "",
   hours: DAYS.map((d, i) => [d, i === 6 ? "1:00pm – 6:00pm" : i >= 4 ? "9:00am – 8:00pm" : "9:00am – 7:00pm"]),
   delivery: [
@@ -471,7 +471,10 @@ function renderSettings() {
     <div class="sec"><h3>Contact</h3>
       <label class="field"><span>WhatsApp number (orders go here)</span><input type="tel" name="whatsapp" value="${esc(s.whatsapp)}" placeholder="233241234567">
         <small>Country code first, no + or spaces. 024 123 4567 → 233241234567</small></label>
-      <label class="field"><span>Phone number shown on the site</span><input type="tel" name="phone" value="${esc(s.phone)}" placeholder="+233 20 741 1266"></label>
+      <div class="row2">
+        <label class="field"><span>Phone 1 (shown on site)</span><input type="tel" name="phone" value="${esc(s.phone)}" placeholder="+233 20 741 1266"></label>
+        <label class="field"><span>Phone 2 (shown on site)</span><input type="tel" name="phone2" value="${esc(s.phone2)}" placeholder="+233 26 977 0536"></label>
+      </div>
       <label class="field"><span>Instagram</span><input type="text" name="instagram" value="${esc(s.instagram)}" placeholder="@riyakloset or full link"></label>
       <label class="field"><span>TikTok</span><input type="text" name="tiktok" value="${esc(s.tiktok)}" placeholder="@riyakloset or full link"></label>
     </div>
@@ -521,6 +524,7 @@ async function saveSettings(e) {
   const data = {
     whatsapp: wa,
     phone: (f.get("phone") || "").trim().slice(0, 25),
+    phone2: (f.get("phone2") || "").trim().slice(0, 25),
     instagram: socialUrl(f.get("instagram") || "", "https://www.instagram.com/"),
     tiktok: tk,
     momoNumber: f.get("momoNumber").trim(), momoName: f.get("momoName").trim(),
