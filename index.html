@@ -1283,7 +1283,7 @@ function buildOrderMessage(ref) {
    SECTION: CUSTOMER ACCOUNTS (sign up, sign in, profile, orders, delete)
    Customers can browse freely; signing in is needed to place an order.
    ===================================================================== */
-let session = null, profile = null, myOrders = null;
+let session = null, profile = null, myOrders = null, isShopAdmin = false;
 
 async function initAuth() {
   if (!hasBackend()) return;
@@ -1293,7 +1293,7 @@ async function initAuth() {
     session = sess;
     updateAccountIcon();
     if (event === "PASSWORD_RECOVERY") { location.hash = "#/account?reset=1"; return; }
-    if (event === "SIGNED_OUT") { profile = null; myOrders = null; }
+    if (event === "SIGNED_OUT") { profile = null; myOrders = null; isShopAdmin = false; }
     if (event === "SIGNED_IN") {
       // Don't call Supabase inside this callback (can deadlock); run right after
       setTimeout(async () => {
@@ -1309,8 +1309,12 @@ async function initAuth() {
 }
 async function loadProfile() {
   if (!session) return;
-  const { data } = await sb.from("profiles").select("*").eq("id", session.user.id).maybeSingle();
+  const [{ data }, adm] = await Promise.all([
+    sb.from("profiles").select("*").eq("id", session.user.id).maybeSingle(),
+    sb.from("admins").select("user_id").eq("user_id", session.user.id).maybeSingle()
+  ]);
   profile = data || { full_name: "", phone: "", area: "" };
+  isShopAdmin = !!(adm && adm.data);
   const c = state.checkout;           // pre-fill checkout
   c.name = c.name || profile.full_name || "";
   c.phone = c.phone || profile.phone || "";
@@ -1379,6 +1383,10 @@ function viewProfile() {
   return `<div class="wrap acct">
     <h1 class="page">Hi${p.full_name ? ", " + esc(p.full_name.split(" ")[0]) : ""} 👋</h1>
     <p style="color:var(--muted);margin-top:4px">Signed in as ${esc(email)}</p>
+    ${isShopAdmin ? `<div class="panel" style="background:var(--ink);color:#fff;border-color:var(--ink)">
+      <h2 style="color:var(--gold)">You're the shop owner</h2>
+      <p style="opacity:.85;font-size:.92rem;margin:4px 0 12px">Add items and photos, change prices, see orders and pickups, and edit shop settings.</p>
+      <a class="btn btn-gold btn-block" href="admin.html">Open admin panel →</a></div>` : ""}
 
     <form class="panel" id="profForm">
       <h2>Personal details</h2>
@@ -1399,12 +1407,12 @@ function viewProfile() {
       <button class="btn btn-line btn-block" id="signOut" style="margin-top:14px">Sign out</button>
     </div>
 
-    <form class="panel danger" id="deleteForm">
+    ${isShopAdmin ? "" : `<form class="panel danger" id="deleteForm">
       <h2>Delete account</h2>
       <p style="color:var(--muted);font-size:.9rem;margin-top:4px">This permanently deletes your login and personal details. Past orders are kept for the shop's records with your name and phone removed. This can't be undone.</p>
       <label class="field"><span>Type DELETE to confirm</span><input name="confirm" autocomplete="off" placeholder="DELETE"></label>
       <button class="btn btn-red btn-block" style="margin-top:12px">Delete my account</button>
-    </form>
+    </form>`}
   </div>`;
 }
 
