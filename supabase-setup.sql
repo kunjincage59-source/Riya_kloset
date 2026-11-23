@@ -91,7 +91,7 @@ create policy "settings: public read" on public.settings for select using (true)
 create policy "settings: admin insert" on public.settings for insert with check (public.is_admin());
 create policy "settings: admin update" on public.settings for update using (public.is_admin()) with check (public.is_admin());
 insert into public.settings (id, data)
-values (1, '{"city":"Accra","whatsapp":"233207411266","phone":"+233 20 741 1266"}'::jsonb)
+values (1, '{"city":"Accra","whatsapp":"233207411266","phone":"+233 20 741 1266","phone2":"+233 26 977 0536"}'::jsonb)
 on conflict (id) do nothing;
 
 -- ---------------------------------------------------------------------
@@ -203,6 +203,20 @@ create policy "product-images: admin update" on storage.objects for update to au
   using (bucket_id = 'product-images' and public.is_admin());
 create policy "product-images: admin delete" on storage.objects for delete to authenticated
   using (bucket_id = 'product-images' and public.is_admin());
+
+-- ---------------------------------------------------------------------
+-- TABLE ACCESS for the website (newer Supabase projects don't grant this
+-- automatically). Row Level Security above still decides what each
+-- person can actually see or change.
+-- ---------------------------------------------------------------------
+grant usage on schema public to anon, authenticated;
+grant select on public.products, public.settings to anon, authenticated;
+grant insert, update, delete on public.products, public.settings to authenticated;
+grant select, insert, update on public.profiles to authenticated;
+grant select, insert, update, delete on public.orders to authenticated;
+grant select on public.admins to authenticated;
+grant execute on function public.is_admin() to anon, authenticated;
+grant execute on function public.delete_my_account() to authenticated;
 
 -- =====================================================================
 --  LAST STEP (after the owner has created her login, see README step 4):
